@@ -1,44 +1,121 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include "dicegame.h"
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include "route-records.h"
 
-int main(){
-    printf("DICE GAME BY Peyton Malvaux. gir387\n");
+int main( int argc, char *argv[] )
+{
+    /* 1. Declare variables here */
+    FILE* fp;
+    RouteRecord* r;
 
-    time_t t;
-    srand((unsigned) time(&t)); // Initialize the srand() to start the random generator
 
-    int p1Pts = 0; // Initialize the player-1 and player-2 points to 0
-    int p2Pts = 0;
+    int flightsLength;
+    /* 2. Check command line arguments here. If a command line argument (for the file name) is missing, print out the following: ERROR: Missing file name and end the program */
+    /*if (argc < 3) {
+      printf("missing argument\n");
+      exit(-1);
+    }
 
-    int rounds, dice1, dice2, sum, p1Ws, p2Ws; // Initialize all other required variables
+    /* 3. Attempt to open the file. Print out Opening <filename>... before you call fopen(). */
+    printf("Opening data.csv...");
+    /* 4. Check to see if the file opens. If it does not open, print out ERROR: Could not open file and end the program. */
+        fp = fopen("data.csv","r");
+        if(fp == NULL){
+            printf("Error File could not open");
+            exit(1);
+        }
+/* 5. Do the following to load the records into an array of RouteRecords
 
-    printf("How many rounds do you wanna play?");
-    scanf("%d", &rounds); // Ask the user for the number of rounds to run the game
-    int a = 0;
-    printPlayerPoints(a, &p1Pts, &p2Pts); // Call printPlayerPoints() function to print the initial player points which will be 0
+5.1 Call createRecords(), which will read through the file once to find the total number of lines/records in the file. Use this count, to dynamically allocate memory for an array of RouteRecords. It returns a pointer to that array. Don't forget to rewind the file pointer.
 
-	// Set up the loop to go through all the rounds one at a time
-	//{
-		// Call the corresponding functions to get the information for this round - type, dice, points
-		// Print round number
-		// Print current player
-	    // Call printRoundInfo() to print the round information
+5.2 Call fillRecords() to go through the CSV file again to fill in the values. It will then return the actual number of items the array has. Recall that not all records in the original CSV file will be entered into the array. Print the number of unique routes operated by different airlines: Unique routes operated by airlines: ???
 
-		// MAIN GAME LOGIC
-		// Write code here to get the main game logic using branches
-		// Success: Player-1 (odd player) is the current player and the dice rolled is odd
-		// OR Player-2 (even player) is the current player and the dice rolled is even.
-			// Current player gains the points, based on the type of the round (see above). The current player’s turn continues in the next round.
-		// Failure: Player-1 (odd player) is the current player and the dice rolled is even
-		// OR Player-2 (even player) is the current player and the dice rolled is odd.
-			// Current player incurs penalty of the same number of points, based on the type of the round (see above). In the next round, the current player is changed to the other player.
-		// Call printPlayerPoints() to print the player information at the end of the round
-	//}
-	printf("\nGAME OVER!!\n");
-	// Compare the final points for player-1 and player-2
-	// Print the winner as the one with higher points
+    		5.3 Close the the file.
+    */
+    r = createRecords(fp);
+    flightsLength = fillRecords(r, fp);
 
-    return 0; // Return from the main() function to end the program successfully
+    fclose(fp);
+
+
+    /* 6. Create an infinite loop that will do the following:
+
+    		6.1 Call printMenu()
+
+    		6.2 Ask the user to input a value for the menu
+
+    		6.3 Handle the case in which a non-integer value is entered
+
+    		6.4 Create a switch/case statement to handle all the menu options
+
+	    		6.4.1 Each option requires the user to enter a search key
+
+	    		6.4.2 Quit needs to free the array
+
+    */
+    int i =0;
+  while(i != 1){
+    int userChoice;
+    char key1[4];
+    char key2[4];
+
+    SearchType st;
+    printMenu();
+    printf("Enter Your Choice Below: \n");
+    scanf("%d", &userChoice);
+    /*while(userChoice <= 0 || userChoice > 5){
+        printf("Enter a different number");
+        scanf("%d", &userChoice);
+    }*/
+    switch(userChoice){
+   case 1:
+        // By ROUTE
+        st = ROUTE;
+        printf("Enter the origin: ");
+        scanf("%s", key1);
+        printf("\n");
+        printf("Enter destination: ");
+        scanf("%s", key2);
+
+    break;
+       case 2:
+        // By Origin
+        st = ORIGIN;
+        printf("Enter the origin: ");
+        scanf("%s", key1);
+        printf("\n");
+
+
+    break;
+
+       case 3:
+        // By DESTINATION
+        st = DESTINATION;
+
+        printf("Enter destination: ");
+        scanf("%s", key1);
+        printf("\n");
+    break;
+
+       case 4:
+        // By Airline
+        st = AIRLINE;
+        printf("Enter the AIRLINE: ");
+        scanf("%s", key1);
+        printf("\n");
+    break;
+
+       default:
+        printf("\n");
+        i++;
+    }
+    searchRecords(r,flightsLength, key1, key2, st);
+
+
+
+
+  }
+    return 0;
 }
