@@ -1,8 +1,0 @@
-Project2: main.o routeRecords.o
-gcc main.o routeRecords.o -o Project2
-main.o: main.c routeRecords.h
-gcc -c main.c
-routeRecords.o: routeRecords.c routeRecords.h
-gcc -c routeRecords.c
-clean:
-rm *.o Project2
