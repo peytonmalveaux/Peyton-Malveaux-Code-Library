@@ -1,0 +1,3 @@
+Activat venv
+tutorial-env\Scripts\activate
+
